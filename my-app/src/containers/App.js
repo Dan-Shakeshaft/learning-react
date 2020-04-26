@@ -1,18 +1,51 @@
 import React, { Component } from 'react';
 import './App.css';
-import Person from './Person/Person';
+import Persons from '../components/Persons/Persons';
 import Radium, {StyleRoot} from 'radium';
+import Cockpit from '../components/Cockpit/Cockpit';
 
 //Class based approach 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log('[App.js] constructor');
+    // this.state = {
+    //   persons: [ 
+    //     { id : 1, name: 'Dan', age: 30 },
+    //     { id: 2, name: 'Jade', age: 27 },
+    //     { id: 3, name: 'John', age: 35 }
+    //    ],
+    //   showPersons: false
+    // }
+  }
+
   state = {
     persons: [ 
       { id : 1, name: 'Dan', age: 30 },
       { id: 2, name: 'Jade', age: 27 },
       { id: 3, name: 'John', age: 35 }
      ],
-    showPersons: false
+    showPersons: false,
+    showCockpit: true
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    console.log('[App.js] getDerivedStateFromProps ' + props);
+    return state;
+  }
+
+  componentDidMount() {
+    console.log('[App.js] componentDidMount');
+  }
+
+  componentDidUpdate() {
+    console.log('[App.js] componentDidUpdate');
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('[App.js] shouldComponentUpdate');
+    return true;
   }
 
   nameChangedHandler = (event, id) => {
@@ -47,6 +80,8 @@ class App extends Component {
   }
 
   render() {
+    console.log('[App.js] render');
+
     const style = {
       backgroundColor: 'green',
       font: 'inherit',
@@ -63,19 +98,12 @@ class App extends Component {
     let persons = null;
 
     if (this.state.showPersons) {
-      persons = (
-        <div>
-          {this.state.persons.map((person, index) => {
-            return <Person 
-              key={person.id}
-              name={person.name} 
-              age={person.age}
-              click={() => this.deletePersonHandler(index)} 
-              nameChange={(event) => this.nameChangedHandler(event, person.id)} />
-          })}
-        </div>
-      );
-
+      persons = 
+          <Persons 
+            persons={this.state.persons} 
+            clicked={this.deletePersonHandler}
+            changed={this.nameChangedHandler}/>;
+    
       style.backgroundColor = 'red';
       style[':hover'] = {
         backgroundColor: 'salmon',
@@ -83,26 +111,15 @@ class App extends Component {
       }
     }
 
-    //let classes = ['red', 'bold'].join(' ');
-    const classes = [];
-
-    if (this.state.persons.length <= 2) {
-      classes.push('red');
-    }
-
-    if (this.state.persons.length <= 1) {
-      classes.push('bold');
-    }
-
     return (
       <StyleRoot>
         <div className="App">
-          <h1>This is a React application!</h1>
-          <p className={classes.join(' ')}>Rock and Roll React</p>
-          <button
-            style={style}
-            onClick={() => this.togglePersonsHandler()}>Switch Name</button>
-          {persons}
+          <button onClick={() => { this.setState({showCockpit: false})}}>Remove cockpit</button>
+          {this.state.showCockpit ? <Cockpit 
+            personsLength={this.state.persons.length} 
+            style={style} 
+            clicked={this.togglePersonsHandler}/>: null }
+          {persons} 
         </div>
       </StyleRoot>
     );
