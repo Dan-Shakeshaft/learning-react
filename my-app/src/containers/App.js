@@ -5,6 +5,7 @@ import Radium, {StyleRoot} from 'radium';
 import Cockpit from '../components/Cockpit/Cockpit';
 import withClass from '../hoc/withClass';
 import Auxiliary from '../hoc/Auxiliary';
+import AuthContext from '../context/auth-context';
 
 //Class based approach 
 
@@ -30,7 +31,8 @@ class App extends Component {
      ],
     showPersons: false,
     showCockpit: true,
-    changeCounter: 0
+    changeCounter: 0,
+    authenticated: false
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -49,6 +51,10 @@ class App extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     console.log('[App.js] shouldComponentUpdate');
     return true;
+  }
+
+  loginHandler = () => {
+    this.setState({authenticated: true});
   }
 
   nameChangedHandler = (event, id) => {
@@ -109,6 +115,7 @@ class App extends Component {
       persons = 
           <Persons 
             persons={this.state.persons} 
+            isAuthenticated={this.state.authenticated}
             clicked={this.deletePersonHandler}
             changed={this.nameChangedHandler}/>;
     
@@ -123,11 +130,18 @@ class App extends Component {
       <StyleRoot>
         <Auxiliary>
           <button onClick={() => { this.setState({showCockpit: false})}}>Remove cockpit</button>
-          {this.state.showCockpit ? <Cockpit 
-            personsLength={this.state.persons.length} 
-            style={style} 
-            clicked={this.togglePersonsHandler}/>: null }
-          {persons} 
+          <AuthContext.Provider value={{
+              authenticated: this.state.authenticated, 
+              login: this.loginHandler
+            }}
+          >
+            {this.state.showCockpit ? 
+              <Cockpit 
+                personsLength={this.state.persons.length} 
+                style={style} 
+                clicked={this.togglePersonsHandler}/>: null}
+              {persons} 
+          </AuthContext.Provider>
         </Auxiliary>
       </StyleRoot>
     );
