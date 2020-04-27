@@ -2,6 +2,8 @@ import React, {Component, Fragment} from 'react';
 import './Person.css';
 import Radium from 'radium';
 import Auxiliary from '../../../hoc/Auxiliary';
+import withClass from '../../../hoc/withClass';
+import PropTypes from 'prop-types';
 
 class Person extends Component {
     render () {
@@ -21,12 +23,19 @@ class Person extends Component {
             //     <button onClick={this.props.click}>Delete</button>
             // </div>
 
-            <Fragment>
+            // <Fragment>
+            //     <p>I'm {this.props.name} and I am {this.props.age} years old</p>
+            //     <p>{this.props.children}</p>
+            //     <input type="text" onChange={this.props.nameChange} value={this.props.name}/>
+            //     <button onClick={this.props.click}>Delete</button>
+            // </Fragment>
+
+            <Auxiliary>
                 <p>I'm {this.props.name} and I am {this.props.age} years old</p>
                 <p>{this.props.children}</p>
                 <input type="text" onChange={this.props.nameChange} value={this.props.name}/>
                 <button onClick={this.props.click}>Delete</button>
-            </Fragment>
+            </Auxiliary>
 
             //render adajacent JSX
             // [
@@ -39,4 +48,11 @@ class Person extends Component {
     }
 };
 
-export default Radium(Person);
+Person.propTypes = {
+    click: PropTypes.func,
+    name: PropTypes.string,
+    age: PropTypes.number,
+    change: PropTypes.func
+};
+
+export default Radium(withClass(Person, "Person"));
